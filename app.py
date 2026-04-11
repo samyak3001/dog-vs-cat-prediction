@@ -1,28 +1,37 @@
 import streamlit as st
 import numpy as np
 from PIL import Image
-from tensorflow.keras.models import load_model
-from tensorflow.keras.utils import img_to_array
-from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
+from keras.models import load_model
+import gdown
 
-model = load_model("cat_dog_model.h5")
+# Download model
+url = "https://drive.google.com/uc?id=15HYsAWvbom5uwc8F3WtIssfgfC4M_FjA"
+gdown.download(url, "model.keras", quiet=False)
+
+# Load model
+model = load_model("model.keras")
+
+# UI
+st.set_page_config(page_title="Animal Classifier", page_icon="🐾")
 
 st.title("🐶🐱 Cat vs Dog Classifier")
+st.write("Upload an image to classify")
 
-uploaded_file = st.file_uploader("Upload an image", type=["jpg", "png"])
+uploaded_file = st.file_uploader("Upload Image", type=["jpg", "png"])
 
 if uploaded_file is not None:
     img = Image.open(uploaded_file)
-    st.image(img)
+    st.image(img, caption="Uploaded Image", use_column_width=True)
 
     img = img.resize((160, 160))
-    img_array = img_to_array(img)
-    img_array = preprocess_input(img_array)
-    img_array = np.expand_dims(img_array, axis=0)
+    img = np.array(img) / 255.0
+    img = np.expand_dims(img, axis=0)
 
-    prediction = model.predict(img_array)[0][0]
+    prediction = model.predict(img)[0][0]
 
     if prediction > 0.5:
         st.success("🐶 Dog")
+        st.write(f"Confidence: {prediction:.2f}")
     else:
         st.success("🐱 Cat")
+        st.write(f"Confidence: {1 - prediction:.2f}")
