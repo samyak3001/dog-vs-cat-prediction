@@ -4,175 +4,109 @@ from PIL import Image
 import tensorflow as tf
 
 # ============================================================
-# PAGE CONFIGURATION
+# PAGE CONFIG
 # ============================================================
 
 st.set_page_config(
     page_title="PawVision AI",
     page_icon="🐾",
-    layout="centered",
-    initial_sidebar_state="collapsed"
+    layout="centered"
 )
 
 # ============================================================
 # CUSTOM CSS
 # ============================================================
 
-st.markdown("""
-<style>
+st.markdown(
+    """
+    <style>
 
     /* Main background */
     .stApp {
-        background:
-            radial-gradient(
-                circle at 10% 10%,
-                rgba(99, 102, 241, 0.12),
-                transparent 30%
-            ),
-            radial-gradient(
-                circle at 90% 20%,
-                rgba(236, 72, 153, 0.10),
-                transparent 30%
-            ),
-            #0f1117;
-        color: #ffffff;
+        background: linear-gradient(
+            135deg,
+            #0f1117 0%,
+            #171522 50%,
+            #10131a 100%
+        );
     }
 
-    /* Remove top padding */
+    /* Main container */
     .block-container {
+        max-width: 800px;
         padding-top: 2rem;
         padding-bottom: 3rem;
-        max-width: 850px;
     }
 
-    /* Header */
-    .hero {
+    /* Main title */
+    .main-title {
         text-align: center;
-        padding: 25px 10px 15px 10px;
-    }
-
-    .logo {
-        font-size: 55px;
+        font-size: 42px;
+        font-weight: 800;
         margin-bottom: 5px;
     }
 
-    .hero-title {
-        font-size: 42px;
-        font-weight: 800;
-        letter-spacing: -1px;
-        margin: 0;
-        background: linear-gradient(
-            90deg,
-            #8b5cf6,
-            #ec4899,
-            #f59e0b
-        );
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .hero-subtitle {
+    /* Subtitle */
+    .subtitle {
+        text-align: center;
         color: #a1a1aa;
         font-size: 16px;
-        margin-top: 10px;
+        margin-bottom: 30px;
     }
 
-    /* Upload card */
-    .upload-card {
-        background: rgba(255, 255, 255, 0.045);
-        border: 1px solid rgba(255, 255, 255, 0.09);
-        border-radius: 20px;
-        padding: 25px;
-        margin-top: 25px;
-        box-shadow: 0 15px 45px rgba(0,0,0,0.25);
-    }
-
-    /* Section title */
-    .section-title {
+    /* Upload box */
+    .upload-title {
         font-size: 20px;
         font-weight: 700;
-        margin-bottom: 8px;
+        margin-bottom: 5px;
     }
 
-    /* Result card */
-    .result-card {
-        margin-top: 25px;
-        padding: 25px;
-        border-radius: 20px;
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.10);
+    .upload-description {
+        color: #a1a1aa;
+        font-size: 14px;
+        margin-bottom: 15px;
+    }
+
+    /* Result title */
+    .result-title {
         text-align: center;
-    }
-
-    .result-animal {
-        font-size: 42px;
-        margin-bottom: 5px;
-    }
-
-    .result-name {
-        font-size: 30px;
+        font-size: 28px;
         font-weight: 800;
-        margin-bottom: 5px;
+        margin-top: 20px;
     }
 
-    .confidence {
+    .result-confidence {
+        text-align: center;
         color: #a1a1aa;
         font-size: 15px;
-    }
-
-    /* Confidence bar */
-    .bar-container {
-        width: 100%;
-        height: 10px;
-        background: #27272a;
-        border-radius: 20px;
-        margin-top: 15px;
-        overflow: hidden;
-    }
-
-    .bar {
-        height: 100%;
-        border-radius: 20px;
-        background: linear-gradient(
-            90deg,
-            #8b5cf6,
-            #ec4899
-        );
-    }
-
-    /* Prediction value */
-    .prediction-value {
-        margin-top: 15px;
-        color: #71717a;
-        font-size: 13px;
     }
 
     /* Footer */
     .footer {
         text-align: center;
-        color: #52525b;
+        color: #71717a;
         font-size: 13px;
-        margin-top: 45px;
+        margin-top: 40px;
     }
 
-    /* File uploader */
-    [data-testid="stFileUploader"] {
-        background: rgba(255,255,255,0.025);
-        border-radius: 15px;
-    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
-    /* Buttons */
-    .stButton > button {
-        width: 100%;
-        border-radius: 12px;
-        border: none;
-        padding: 12px;
-        font-weight: 700;
-    }
+# ============================================================
+# HEADER
+# ============================================================
 
-</style>
-""", unsafe_allow_html=True)
+st.markdown(
+    '<div class="main-title">🐾 PawVision AI</div>',
+    unsafe_allow_html=True
+)
 
+st.markdown(
+    '<div class="subtitle">Intelligent Cat & Dog Image Classification</div>',
+    unsafe_allow_html=True
+)
 
 # ============================================================
 # LOAD MODEL
@@ -180,6 +114,7 @@ st.markdown("""
 
 @st.cache_resource
 def load_model():
+
     return tf.keras.models.load_model(
         "cat_dog_model.h5",
         compile=False
@@ -188,45 +123,21 @@ def load_model():
 
 model = load_model()
 
-
-# ============================================================
-# HEADER
-# ============================================================
-
-st.markdown("""
-<div class="hero">
-
-    <div class="logo">🐾</div>
-
-    <div class="hero-title">
-        PawVision AI
-    </div>
-
-    <div class="hero-subtitle">
-        Intelligent Cat & Dog Image Classification
-    </div>
-
-</div>
-""", unsafe_allow_html=True)
-
-
 # ============================================================
 # UPLOAD SECTION
 # ============================================================
 
-st.markdown("""
-<div class="upload-card">
+st.markdown(
+    '<div class="upload-title">📸 Upload an Image</div>',
+    unsafe_allow_html=True
+)
 
-<div class="section-title">
-📸 Upload an Image
-</div>
-
-<p style="color:#a1a1aa;">
-Upload a clear image of a cat or dog and let PawVision AI identify it.
-</p>
-
-</div>
-""", unsafe_allow_html=True)
+st.markdown(
+    '<div class="upload-description">'
+    'Upload a clear image of a cat or dog to classify it.'
+    '</div>',
+    unsafe_allow_html=True
+)
 
 uploaded_file = st.file_uploader(
     "Choose an image",
@@ -234,43 +145,53 @@ uploaded_file = st.file_uploader(
     label_visibility="collapsed"
 )
 
-
 # ============================================================
-# PREDICTION
+# IMAGE PROCESSING
 # ============================================================
 
 if uploaded_file is not None:
 
-    img = Image.open(uploaded_file).convert("RGB")
+    # Open image
+    image = Image.open(uploaded_file).convert("RGB")
 
-    st.markdown("<br>", unsafe_allow_html=True)
+    # --------------------------------------------------------
+    # Display smaller image
+    # --------------------------------------------------------
 
-    # Display uploaded image
     st.image(
-        img,
+        image,
         caption="Uploaded Image",
-        use_container_width=True
+        width=450
     )
 
-    # Resize
-    resized_img = img.resize((160, 160))
+    # --------------------------------------------------------
+    # Prepare image for model
+    # --------------------------------------------------------
 
-    # Convert to array
-    img_array = np.array(resized_img)
+    resized_image = image.resize((160, 160))
 
-    # Normalize
-    img_array = img_array / 255.0
+    image_array = np.array(resized_image)
 
-    # Add batch dimension
-    img_array = np.expand_dims(img_array, axis=0)
+    image_array = image_array / 255.0
 
+    image_array = np.expand_dims(
+        image_array,
+        axis=0
+    )
+
+    # --------------------------------------------------------
     # Prediction
+    # --------------------------------------------------------
+
     prediction = model.predict(
-        img_array,
+        image_array,
         verbose=0
     )[0][0]
 
+    # --------------------------------------------------------
     # Determine class
+    # --------------------------------------------------------
+
     if prediction > 0.5:
 
         animal = "Dog"
@@ -283,74 +204,85 @@ if uploaded_file is not None:
         emoji = "🐱"
         confidence = (1 - prediction) * 100
 
-
     # ========================================================
     # RESULT
     # ========================================================
 
-    st.markdown(f"""
-    <div class="result-card">
+    st.markdown(
+        f'<div class="result-title">'
+        f'{emoji} {animal}'
+        f'</div>',
+        unsafe_allow_html=True
+    )
 
-        <div class="result-animal">
-            {emoji}
-        </div>
+    st.markdown(
+        f'<div class="result-confidence">'
+        f'Confidence: <b>{confidence:.2f}%</b>'
+        f'</div>',
+        unsafe_allow_html=True
+    )
 
-        <div class="result-name">
-            {animal}
-        </div>
+    # Confidence progress bar
+    st.progress(
+        min(int(confidence), 100)
+    )
 
-        <div class="confidence">
-            Model confidence: <b>{confidence:.2f}%</b>
-        </div>
+    # Prediction score
+    st.caption(
+        f"Prediction score: {prediction:.4f}"
+    )
 
-        <div class="bar-container">
+    # ========================================================
+    # INTERPRETATION
+    # ========================================================
 
-            <div
-                class="bar"
-                style="width:{confidence:.2f}%"
-            ></div>
+    if animal == "Dog":
 
-        </div>
+        st.success(
+            f"🐶 The model predicts this image is a Dog "
+            f"with {confidence:.2f}% confidence."
+        )
 
-        <div class="prediction-value">
-            Prediction score: {prediction:.4f}
-        </div>
+    else:
 
-    </div>
-    """, unsafe_allow_html=True)
-
+        st.info(
+            f"🐱 The model predicts this image is a Cat "
+            f"with {confidence:.2f}% confidence."
+        )
 
 # ============================================================
-# INFORMATION
+# ABOUT SECTION
 # ============================================================
 
-st.markdown("<br>", unsafe_allow_html=True)
+st.divider()
 
 with st.expander("ℹ️ About PawVision AI"):
 
-    st.write("""
-    PawVision AI is a deep-learning based image classifier
-    designed to distinguish between cats and dogs.
+    st.write(
+        """
+        **PawVision AI** is a deep-learning based image
+        classification application that identifies whether
+        an uploaded image contains a Cat or Dog.
 
-    **How it works:**
+        **How it works:**
 
-    1. Upload an image.
-    2. The image is resized to 160 × 160 pixels.
-    3. The image is normalized.
-    4. The trained neural network analyzes the image.
-    5. The system predicts Cat or Dog.
-    6. A confidence score is displayed.
-    """)
-
+        1. Upload an image.
+        2. The image is converted to RGB.
+        3. The image is resized to 160 × 160 pixels.
+        4. Pixel values are normalized.
+        5. The trained neural network processes the image.
+        6. The application predicts Cat or Dog.
+        7. The confidence score is displayed.
+        """
+    )
 
 # ============================================================
 # FOOTER
 # ============================================================
 
-st.markdown("""
-<div class="footer">
-
-🐾 PawVision AI · Powered by Deep Learning
-
-</div>
-""", unsafe_allow_html=True)
+st.markdown(
+    '<div class="footer">'
+    '🐾 PawVision AI • Deep Learning Image Classifier'
+    '</div>',
+    unsafe_allow_html=True
+)
