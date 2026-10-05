@@ -10,7 +10,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# Load model
+# Load trained model
 model = tf.keras.models.load_model(
     "cat_dog_model.h5",
     compile=False
@@ -18,7 +18,6 @@ model = tf.keras.models.load_model(
 
 # Title
 st.title("🐶🐱 Cat vs Dog Classifier")
-
 st.write("Upload an image to classify it as a Cat or Dog.")
 
 # Upload image
@@ -32,20 +31,20 @@ if uploaded_file is not None:
     # Open image
     img = Image.open(uploaded_file).convert("RGB")
 
-    # Display original image
+    # Display image
     st.image(
         img,
         caption="Uploaded Image",
         use_container_width=True
     )
 
-    # Resize to training size
+    # Resize to model input size
     img = img.resize((160, 160))
 
-    # Convert to NumPy array
+    # Convert image to NumPy array
     img_array = np.array(img)
 
-    # Normalize
+    # Normalize pixel values
     img_array = img_array / 255.0
 
     # Add batch dimension
@@ -57,10 +56,10 @@ if uploaded_file is not None:
         verbose=0
     )[0][0]
 
-    # Show raw prediction
+    # Display prediction value
     st.write(f"Prediction value: {prediction:.4f}")
 
-    # Classification
+    # Classify
     if prediction > 0.5:
         confidence = prediction * 100
         st.success(
