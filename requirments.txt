@@ -2,3 +2,5 @@ streamlit
 numpy
 pillow
 gdown
+tensorflow
+h5py
